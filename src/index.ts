@@ -225,6 +225,23 @@ const getGrants = async (context: DumperContext) => {
     )
     .join("")
 }
+const getSchemas = async (context: DumperContext) => {
+  const { client, schemas } = context
+
+  const res = await client.query(
+    `
+    SELECT schema_name
+    FROM information_schema.schemata
+    WHERE schema_name = ANY($1)`,
+    [schemas]
+  )
+
+  return res.rows
+    .filter((row) => row.schema_name !== "public")
+    .map((row) => `CREATE SCHEMA ${row.schema_name};\n`)
+    .join("")
+}
+
 const createSequences = async (context: DumperContext) => {
   const { client, schemas } = context
   const { rows } = await client.query(`
@@ -260,6 +277,9 @@ export const getSchemaSQL = async ({
 
   const tables = await getTables(dumperContext)
   let sql = ""
+
+  const schemaSQL = await getSchemas(dumperContext)
+  sql += schemaSQL
 
   const extensions = await getExtensions(dumperContext)
   sql += extensions
