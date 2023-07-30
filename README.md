@@ -3,6 +3,8 @@
 This is an alternative to `pg_dump` written in node. You can use this to get
 all the SQL to recreate a schema.
 
+![](https://user-images.githubusercontent.com/1910070/257036161-8a17dc4a-1457-4756-9ad3-52bce0445392.gif)
+
 ## Installation
 
 `npm add -D pg-schema-dump`
