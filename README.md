@@ -5,7 +5,7 @@ all the SQL to recreate a schema.
 
 ## Installation
 
-`npm add -D pg-dump`
+`npm add -D pg-schema-dump`
 
 ## Usage
 
@@ -13,13 +13,13 @@ all the SQL to recreate a schema.
 
 ```bash
 # By default, pg-dump knows POSTGRES_HOST, DATABASE_URL, etc.
-pg-dump dump
+pg-schema-dump dump
 
 # Dump schema.sql to stdout for public schema on default database "postgres"
-pg-dump dump -h localhost -U postgres
+pg-schema-dump dump -h localhost -U postgres
 
 # With postgres URL
-pg-dump dump psql://user:1234@localhost:5432/my_db
+pg-schema-dump dump psql://user:1234@localhost:5432/my_db
 ```
 
 ### Tree Dumping
@@ -30,10 +30,10 @@ in `<schema>/<table>/table.sql`. This makes it easy to find and examine differen
 parts of your database in a structured way.
 
 ```bash
-pg-dump dump-tree /path/to/dir
+pg-schema-dump dump-tree /path/to/dir
 
 # You can use the same environment variables or specify the host etc.
-pg-dump dump-tree -h localhost -U postgres /path/to/dir
+pg-schema-dump dump-tree -h localhost -U postgres /path/to/dir
 ```
 
 ### As a Library
