@@ -1,6 +1,5 @@
 import { Client } from "pg"
 import { getConnectionStringFromEnv } from "pg-connection-from-env"
-import fs from "fs"
 
 export * from "./get-tree"
 export * from "./dump-tree"
@@ -18,7 +17,7 @@ const alphabetical = (a, b) => {
 }
 
 type DumperContext = {
-  client: typeof Client
+  client: Client
   schemas: string[]
 }
 
