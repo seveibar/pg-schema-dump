@@ -6,7 +6,6 @@ export const dumpSql = async ({
 }: {
   defaultDatabase?: string
   schemas?: string[]
-  targetDir: string
 }) => {
   // TODO format
   return await getSchemaSQL({

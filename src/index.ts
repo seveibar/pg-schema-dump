@@ -1,7 +1,11 @@
 import { Client } from "pg"
 import { getConnectionStringFromEnv } from "pg-connection-from-env"
 import fs from "fs"
-import { getTreeFromSQL, treeToDirectory } from "pgtui"
+
+export * from "./get-tree"
+export * from "./dump-tree"
+export * from "./dump-sql"
+export { getTreeFromSQL, treeToDirectory } from "pgtui"
 
 const alphabetical = (a, b) => {
   if (a.sequence_name < b.sequence_name) {
@@ -331,7 +335,7 @@ const createViews = async (context: DumperContext) => {
     const row = rows.find(
       (r) => `${r.table_schema}.${r.table_name}` === viewName
     )
-    return `CREATE VIEW ${row.table_schema}.${row.table_name} AS ${row.view_definition};\n`
+    return `CREATE VIEW ${row.table_schema}.${row.table_name} AS ${row.view_definition}\n`
   })
 
   return viewStatements.join("")
