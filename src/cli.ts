@@ -6,7 +6,7 @@ import { dumpSql, dumpTree } from "./"
 const dumpOptionsFn = (yargs) => {
   return yargs
     .option("host", {
-      alias: "H",
+      alias: "h",
       type: "string",
       description: "Host of the PostgreSQL server",
       default: "localhost",
