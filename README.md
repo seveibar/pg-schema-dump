@@ -1,8 +1,6 @@
-# Node PG Dump
+# Node PG Schema Dump
 
 This is an alternative to `pg_dump` written in node.
-
-> NOTE: Currently only dumps schema and not the data.
 
 ## Installation
 
