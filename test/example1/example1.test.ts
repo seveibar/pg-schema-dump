@@ -23,11 +23,15 @@ test("dump an example sql schema, should be the same when re-uploading and re-du
     schemas: ["public", "api", "super_api"],
   })
 
-  fs.writeFileSync("example1.testing.sql", sql1)
+  // fs.writeFileSync("example1.testing.sql", sql1)
 
   await pool2.query(sql1)
 
-  // const sql2 = await getSchemaSQL()
+  const sql2 = await getSchemaSQL({
+    schemas: ["public", "api", "super_api"],
+  })
 
-  // t.is(sql1, sql2)
+  // fs.writeFileSync("example1-2.testing.sql", sql2)
+
+  t.is(sql1, sql2)
 })

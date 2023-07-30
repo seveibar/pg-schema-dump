@@ -3,6 +3,16 @@ import { getConnectionStringFromEnv } from "pg-connection-from-env"
 import fs from "fs"
 import { getTreeFromSQL, treeToDirectory } from "pgtui"
 
+const alphabetical = (a, b) => {
+  if (a.sequence_name < b.sequence_name) {
+    return -1
+  }
+  if (a.sequence_name > b.sequence_name) {
+    return 1
+  }
+  return 0
+}
+
 type DumperContext = {
   client: typeof Client
   schemas: string[]
@@ -15,7 +25,9 @@ const getTables = async (context: DumperContext) => {
     WHERE schemaname IN (${schemas.map((s) => `'${s}'`).join(",")});
   `)
 
-  return rows.map((row) => `${row.schemaname}.${row.tablename}`)
+  return rows
+    .map((row) => `${row.schemaname}.${row.tablename}`)
+    .sort(alphabetical)
 }
 
 const getTableDefinition = async (
@@ -45,6 +57,7 @@ const getTableDefinition = async (
           row.is_nullable === "YES" ? "NULL" : "NOT NULL"
         } DEFAULT ${row.column_default || "NULL"}`
       })
+      .sort(alphabetical)
       .join(",\n")}
   );\n`
 }
@@ -87,6 +100,7 @@ const getTableConstraints = async (
       (row) =>
         `ALTER TABLE ONLY ${schema}."${table}" ADD CONSTRAINT "${row.conname}" ${row.pg_get_constraintdef};\n`
     )
+    .sort(alphabetical)
     .join("")
 }
 
@@ -102,7 +116,10 @@ const getFunctions = async (context: DumperContext) => {
   // it in the query, manual remove for now
   rows = rows.filter((r) => !r.pg_get_functiondef.includes("$libdir"))
 
-  return rows.map((row) => `${row.pg_get_functiondef};\n`).join("")
+  return rows
+    .map((row) => `${row.pg_get_functiondef};\n`)
+    .sort(alphabetical)
+    .join("")
 }
 
 interface TriggerInfo {
@@ -160,7 +177,7 @@ const getTriggers = async (context: DumperContext) => {
     WHERE trigger_schema IN (${schemas.map((s) => `'${s}'`).join(",")})
   `)
 
-  return recreateTriggerDefinitions(rows).join("\n")
+  return recreateTriggerDefinitions(rows).sort(alphabetical).join("\n")
 }
 
 const getExtensions = async (context: DumperContext) => {
@@ -171,6 +188,7 @@ const getExtensions = async (context: DumperContext) => {
 
   return rows
     .map((row) => `CREATE EXTENSION IF NOT EXISTS ${row.extname};\n`)
+    .sort(alphabetical)
     .join("")
 }
 
@@ -207,6 +225,7 @@ const getIndexes = async (tableWithSchema: string, context: DumperContext) => {
           )
       )
       .map((row) => `${row.indexdef};\n`)
+      .sort(alphabetical)
       .join("")
   )
 }
@@ -223,6 +242,7 @@ const getGrants = async (context: DumperContext) => {
       (row) =>
         `GRANT ${row.privilege_type} ON ${row.table_schema}.${row.table_name} TO ${row.grantee};\n`
     )
+    .sort(alphabetical)
     .join("")
 }
 const getSchemas = async (context: DumperContext) => {
@@ -239,6 +259,7 @@ const getSchemas = async (context: DumperContext) => {
   return res.rows
     .filter((row) => row.schema_name !== "public")
     .map((row) => `CREATE SCHEMA ${row.schema_name};\n`)
+    .sort(alphabetical)
     .join("")
 }
 
@@ -254,9 +275,67 @@ const createSequences = async (context: DumperContext) => {
     .map(
       (row) => `CREATE SEQUENCE ${row.sequence_schema}.${row.sequence_name};\n`
     )
+    .sort(alphabetical)
     .join("")
 }
 
+const createViews = async (context: DumperContext) => {
+  const { client, schemas } = context
+  let { rows } = await client.query(`
+    SELECT table_name, view_definition, table_schema
+    FROM information_schema.views
+    WHERE table_schema IN (${schemas.map((s) => `'${s}'`).join(",")});
+  `)
+  rows = rows.sort((a, b) =>
+    alphabetical(a.table_schema + a.table_name, b.table_schema + b.table_name)
+  )
+
+  // Build a map of view name to its dependencies
+  const viewDependencies: Map<string, string[]> = new Map()
+  rows.forEach((row) => {
+    const viewName = `${row.table_schema}.${row.table_name}`
+    const definition = row.view_definition
+    const dependencies: string[] = []
+
+    // Extract dependencies from the view definition
+    rows.forEach((depRow) => {
+      const depViewName = `${depRow.table_schema}.${depRow.table_name}`
+      if (definition.includes(depViewName)) {
+        dependencies.push(depViewName)
+      }
+    })
+
+    viewDependencies.set(viewName, dependencies)
+  })
+
+  // Sort the views based on their dependencies
+  const sortedViews: string[] = []
+  const visited = new Set()
+
+  const visit = (viewName) => {
+    if (!visited.has(viewName)) {
+      visited.add(viewName)
+
+      const dependencies = viewDependencies.get(viewName)
+      if (!dependencies) throw new Error("invalid dep- graph issue")
+      dependencies.forEach(visit)
+
+      sortedViews.push(viewName)
+    }
+  }
+
+  ;[...viewDependencies.keys()].forEach(visit)
+
+  // Map the sorted view names back to CREATE VIEW statements
+  const viewStatements = sortedViews.map((viewName) => {
+    const row = rows.find(
+      (r) => `${r.table_schema}.${r.table_name}` === viewName
+    )
+    return `CREATE VIEW ${row.table_schema}.${row.table_name} AS ${row.view_definition};\n`
+  })
+
+  return viewStatements.join("")
+}
 export const getSchemaSQL = async ({
   defaultDatabase = "postgres",
   schemas = ["public"],
@@ -310,6 +389,9 @@ export const getSchemaSQL = async ({
     sql += tableIndexes
   }
 
+  const views = await createViews(dumperContext)
+  sql += views
+
   const functions = await getFunctions(dumperContext)
   sql += functions
 
@@ -318,8 +400,6 @@ export const getSchemaSQL = async ({
 
   const grants = await getGrants(dumperContext)
   sql += grants
-
-  // TODO views
 
   await client.end()
 
