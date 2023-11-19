@@ -16,7 +16,13 @@ export const doubleDumpTest = async (
 
   // await pool1.query(fs.readFileSync("./example1.testing.sql").toString())
 
-  await pool1.query(sql)
+  try {
+    await pool1.query(sql)
+  } catch (e: any) {
+    if (e.message.includes("syntax error")) console.log(sql1)
+
+    throw e
+  }
 
   process.env.DATABASE_URL = conn1
   const sql1 = await getStructureSQL({ schemas })
@@ -26,10 +32,8 @@ export const doubleDumpTest = async (
   try {
     await pool2.query(sql1)
   } catch (e: any) {
-    if (e.message.includes("syntax error")) {
-      console.log(sql1)
-      throw e
-    }
+    if (e.message.includes("syntax error")) console.log(sql1)
+
     throw e
   }
 
