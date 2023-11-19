@@ -1,5 +1,11 @@
 # Node PG Schema Dump
 
+> NOTE: In the source directory, you'll find a "v1" and "v2" directory, for
+> version 2 we're going to use the excellent [pg-introspection module](https://github.com/graphile/crystal/tree/main/utils/pg-introspection), but not all
+> the functions have been immediately replaced. In particular, if you'd like
+> a SQL file as output instead of a directory, you'll need to install the
+> optional `pgtui` dependency which contains the problematic `libpg-query` module
+
 This is an alternative to `pg_dump` written in node. You can use this to get
 all the SQL to recreate a schema.
 

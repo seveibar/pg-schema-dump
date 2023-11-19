@@ -5,8 +5,8 @@ import child_process from "child_process"
 import path from "path"
 import { getTestPostgresDatabaseFactory } from "ava-postgres"
 import { Client } from "pg"
-import { dumpTree } from "../../src"
-import example1Sql from "../example1/example1.sql"
+import { dumpTree } from "../../src/v1"
+import example1Sql from "../complex1/complex1.sql"
 
 let testDir: string
 

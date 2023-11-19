@@ -1,4 +1,4 @@
-import { getSchemaSQL } from "./"
+import { getSchemaSQL } from "."
 
 export const dumpSql = async ({
   defaultDatabase,

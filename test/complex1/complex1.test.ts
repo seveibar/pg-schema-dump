@@ -1,8 +1,8 @@
 import test from "ava"
 import fs from "fs"
 import { getTestPostgresDatabaseFactory } from "ava-postgres"
-import exampleSQL from "./example1.sql"
-import { getSchemaSQL } from "../../src"
+import exampleSQL from "./complex1.sql"
+import { getSchemaSQL } from "../../src/v1"
 
 const getTestDatabase = getTestPostgresDatabaseFactory({
   postgresVersion: "14",
