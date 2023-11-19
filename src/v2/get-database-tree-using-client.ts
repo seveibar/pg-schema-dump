@@ -9,6 +9,7 @@ import { getViewsForSchema } from "./dumper/get-views-for-schema"
 import { uniq } from "lodash"
 import { getGrantsForSchema } from "./dumper/get-grants-for-schema"
 import { getTablelessSequencesForSchema } from "./dumper/get-tableless-sequences-for-schema"
+import { getAllSchemaNames } from "./dumper/get-all-schema-names"
 
 const getTableDefinition = async (
   tableWithSchema: string,
@@ -344,10 +345,9 @@ export const getDatabaseTreeUsingClient = async ({
   }
 
   const tables = await getTables(ctx)
-  const schemaNames = uniq(tables.map((t) => t.schema))
 
   // Initiatialize Schemas
-  for (const schema of schemaNames) {
+  for (const schema of schemas) {
     const sn = { schemaname: schema }
     // TODO get schema owner
     dt.schemas[schema] = {

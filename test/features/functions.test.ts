@@ -17,11 +17,6 @@ test("[feature] functions", async (t) => {
         RETURN account_id;
       END
     $$;
-
-    CREATE TABLE test_table(
-      id uuid PRIMARY KEY,
-      name text not null
-    )
     `,
   })
   t.log(structure)

@@ -4,4 +4,6 @@ import * as OutType from "../../types"
 export const getViewsForSchema = async (
   { schemaname }: { schemaname: string },
   ctx: DumperContext
-): Promise<OutType.View[]> => {}
+): Promise<OutType.View[]> => {
+  return [] // TODO
+}

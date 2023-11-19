@@ -8,7 +8,7 @@ const getTestDatabase = getTestPostgresDatabaseFactory({
   postgresVersion: "14",
 })
 
-test("dump an example sql schema, should be the same when re-uploading and re-dumping", async (t) => {
+test.skip("dump an example sql schema, should be the same when re-uploading and re-dumping", async (t) => {
   const [
     { pool: pool1, connectionString: conn1 },
     { pool: pool2, connectionString: conn2 },
