@@ -46,7 +46,6 @@ export const getSQLFromTree = (tree: DatabaseTree) => {
       sql += render(table.rules)
       sql += render(table.triggers)
     }
-    console.log(schema.views)
     sql += render(schema.views)
     sql += render(schema.grants)
   }

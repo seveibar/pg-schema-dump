@@ -2,13 +2,13 @@ import test from "ava"
 import fs from "fs"
 import { getTestPostgresDatabaseFactory } from "ava-postgres"
 import exampleSQL from "./complex1.sql"
-import { getSchemaSQL } from "../../src/v1"
+import { getStructureSQL } from "../../src"
 
 const getTestDatabase = getTestPostgresDatabaseFactory({
   postgresVersion: "14",
 })
 
-test.skip("dump an example sql schema, should be the same when re-uploading and re-dumping", async (t) => {
+test.skip("dump an complex sql schema, should be the same when re-uploading and re-dumping", async (t) => {
   const [
     { pool: pool1, connectionString: conn1 },
     { pool: pool2, connectionString: conn2 },
@@ -19,7 +19,7 @@ test.skip("dump an example sql schema, should be the same when re-uploading and 
   await pool1.query(exampleSQL)
 
   process.env.DATABASE_URL = conn1
-  const sql1 = await getSchemaSQL({
+  const sql1 = await getStructureSQL({
     schemas: ["public", "api", "super_api"],
   })
 
@@ -27,7 +27,7 @@ test.skip("dump an example sql schema, should be the same when re-uploading and 
 
   await pool2.query(sql1)
 
-  const sql2 = await getSchemaSQL({
+  const sql2 = await getStructureSQL({
     schemas: ["public", "api", "super_api"],
   })
 

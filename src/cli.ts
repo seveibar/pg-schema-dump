@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
-import { dumpSql, dumpTree } from "./v1"
+import {
+  writeDatabaseTreeToDirectory,
+  getDatabaseTreeUsingClient,
+  getStructureSQL,
+} from "./v2"
 
 const dumpOptionsFn = (yargs) => {
   return yargs
@@ -53,7 +57,7 @@ yargs(hideBin(process.argv))
       if (argv.database) process.env.POSTGRES_DATABASE = argv.database
 
       console.log(
-        await dumpSql({
+        await getStructureSQL({
           schemas: argv.schemas ? argv.schemas.split(",") : ["public"],
         })
       )
@@ -76,10 +80,11 @@ yargs(hideBin(process.argv))
       if (argv.password) process.env.POSTGRES_PASSWORD = argv.password
       if (argv.database) process.env.POSTGRES_DATABASE = argv.database
 
-      await dumpTree({
-        targetDir: argv["target-dir"],
+      const tree = await getDatabaseTreeUsingClient({
         schemas: argv.schemas ? argv.schemas.split(",") : ["public"],
       })
+
+      await writeDatabaseTreeToDirectory(tree, argv["target-dir"])
     }
   )
   .help()

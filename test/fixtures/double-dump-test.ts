@@ -19,7 +19,7 @@ export const doubleDumpTest = async (
   try {
     await pool1.query(sql)
   } catch (e: any) {
-    if (e.message.includes("syntax error")) console.log(sql1)
+    if (e.message.includes("syntax error")) console.log(sql)
 
     throw e
   }
