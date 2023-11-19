@@ -338,6 +338,28 @@ export const getDatabaseTreeUsingClient = async ({
 
   const tables = await getTables(dumperContext)
 
+  // Initiatialize Schemas
+  for (const table of tables) {
+    if (!dt.schemas[table.schema]) {
+      // TODO get schema owner
+      dt.schemas[table.schema] = {
+        name: table.schema,
+        tables: {},
+        views: {},
+        functions: {},
+        domains: {},
+        grants: [],
+        owner: "",
+        _tablelessSequences: {},
+      }
+    }
+  }
+
+  // Add tables to schema
+  for (const table of tables) {
+    dt.schemas[table.schema].tables[table.name] = table
+  }
+
   // const schemaSQL = await getSchemas(dumperContext)
   // sql += schemaSQL
 

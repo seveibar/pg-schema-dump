@@ -9,6 +9,7 @@ const render = (
       }
 ) => {
   let queryObjs: Array<{ query: string }>
+  if ("query" in objs) return objs.query as string
   if (Array.isArray(objs)) {
     queryObjs = objs
   } else {
@@ -34,6 +35,7 @@ export const getSQLFromTree = (tree: DatabaseTree) => {
     }
     sql += render(schema.views)
   }
+  return sql
 }
 
 export default getSQLFromTree

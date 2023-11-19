@@ -1,8 +1,8 @@
 import { getTestPostgresDatabaseFactory } from "ava-postgres"
-import { getSchemaSQL } from "../../src/v1"
+import { getStructureSQL } from "../../src/v2"
 
 const getTestDatabase = getTestPostgresDatabaseFactory({
-  postgresVersion: "14",
+  postgresVersion: "15",
 })
 
 export const doubleDumpTest = async (
@@ -19,15 +19,17 @@ export const doubleDumpTest = async (
   await pool1.query(sql)
 
   process.env.DATABASE_URL = conn1
-  const sql1 = await getSchemaSQL({ schemas })
+  const sql1 = await getStructureSQL({ schemas })
 
   // fs.writeFileSync("sql1.testing.sql", sql1)
 
   await pool2.query(sql1)
 
-  const sql2 = await getSchemaSQL({ schemas })
+  const sql2 = await getStructureSQL({ schemas })
 
   // fs.writeFileSync("sql2.testing.sql", sql2)
 
   t.is(sql1, sql2)
+
+  return sql1
 }
