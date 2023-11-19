@@ -20,7 +20,10 @@ const render = (
       queryObjs = vals
     }
   }
-  return queryObjs.map((q) => q.query).join("\n")
+
+  if (queryObjs.length === 0) return ""
+
+  return queryObjs.map((q) => q.query).join(";\n") + ";\n\n"
 }
 
 export const getSQLFromTree = (tree: DatabaseTree) => {
@@ -36,6 +39,7 @@ export const getSQLFromTree = (tree: DatabaseTree) => {
     for (const table of Object.values(schema.tables)) {
       sql += render(table.sequences)
       sql += render(table)
+      sql += render(table.indexes)
       sql += render(table.alterations)
       sql += render(table.policies)
       sql += render(table.grants)
@@ -45,7 +49,7 @@ export const getSQLFromTree = (tree: DatabaseTree) => {
     sql += render(schema.views)
     sql += render(schema.grants)
   }
-  return sql
+  return sql.replace(/\n\n\n/g, "\n\n").replace(/;;/g, ";")
 }
 
 export default getSQLFromTree

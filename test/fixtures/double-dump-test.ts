@@ -23,7 +23,15 @@ export const doubleDumpTest = async (
 
   // fs.writeFileSync("sql1.testing.sql", sql1)
 
-  await pool2.query(sql1)
+  try {
+    await pool2.query(sql1)
+  } catch (e: any) {
+    if (e.message.includes("syntax error")) {
+      console.log(sql1)
+      throw e
+    }
+    throw e
+  }
 
   const sql2 = await getStructureSQL({ schemas })
 
