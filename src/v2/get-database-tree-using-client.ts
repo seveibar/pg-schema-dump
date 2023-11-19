@@ -364,10 +364,6 @@ export const getDatabaseTreeUsingClient = async ({
     }
   }
 
-  // Add tables to schema
-  for (const table of tables) {
-    dt.schemas[table.schema].tables[table.name] = table
-  }
 
   // const schemaSQL = await getSchemas(dumperContext)
   // sql += schemaSQL

@@ -2,6 +2,8 @@ import { DumperContext } from "./dumper-context"
 import * as OutType from "../../types"
 
 export const getTriggersForTable = async (
-  { schemename, tablename }: { schemename: string; tablename: string },
+  { schemaname, tablename }: { schemaname: string; tablename: string },
   ctx: DumperContext
-): Promise<OutType.Trigger> => {}
+): Promise<OutType.Trigger[]> => {
+  return [] // TODO
+}

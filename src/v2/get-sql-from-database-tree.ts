@@ -25,6 +25,10 @@ const render = (
 
 export const getSQLFromTree = (tree: DatabaseTree) => {
   let sql = render(tree.misc)
+  sql += Object.values(tree.schemas)
+    .filter((s) => s.name !== "public")
+    .map((s) => `CREATE SCHEMA ${s.name};`)
+    .join("\n")
   for (const schema of Object.values(tree.schemas)) {
     sql += render(schema.functions)
     sql += render(schema.domains)
