@@ -2,6 +2,8 @@ import { Client } from "pg"
 import { getConnectionStringFromEnv } from "pg-connection-from-env"
 import * as OutType from "../types"
 import { DumperContext, alphabetical, getTables } from "./dumper"
+import { getObjFromArray } from "./dumper/get-obj-from-array"
+import { getDomainsForSchema } from "./dumper/get-domains-for-schema"
 
 const getTableDefinition = async (
   tableWithSchema: string,
@@ -347,9 +349,15 @@ export const getDatabaseTreeUsingClient = async ({
         tables: {},
         views: {},
         functions: {},
-        domains: {},
+        domains: getObjFromArray(
+          await getDomainsForSchema(
+            { schemaname: table.schema },
+            dumperContext
+          ),
+          "name"
+        ),
         grants: [],
-        owner: "",
+        owner: table.owner, // TODO not necessarily same as table owner
         _tablelessSequences: {},
       }
     }

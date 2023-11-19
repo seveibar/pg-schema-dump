@@ -27,6 +27,7 @@ export const getSQLFromTree = (tree: DatabaseTree) => {
   let sql = render(tree.misc)
   for (const schema of Object.values(tree.schemas)) {
     sql += render(schema.functions)
+    sql += render(schema.domains)
     for (const table of Object.values(schema.tables)) {
       sql += render(table.sequences)
       sql += render(table)

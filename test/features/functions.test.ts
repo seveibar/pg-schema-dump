@@ -1,8 +1,8 @@
 import test from "ava"
-import { doubleDumpTest } from "./fixtures/double-dump-test"
+import { doubleDumpTest } from "../fixtures/double-dump-test"
 
-test("[double-dump-test] basic2", async (t) => {
-  const structure = await doubleDumpTest(t, {
+test("[feature] functions", async (t) => {
+  const structure: string = await doubleDumpTest(t, {
     sql: `
     CREATE FUNCTION public.auth_account_id() RETURNS uuid
       LANGUAGE plpgsql

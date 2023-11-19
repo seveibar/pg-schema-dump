@@ -46,6 +46,7 @@ export type Domain = {
   name: string
   owner: string
   type: string
+  query: string
 }
 export type Sequence = {
   name: string
