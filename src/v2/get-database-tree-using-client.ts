@@ -4,6 +4,11 @@ import * as OutType from "../types"
 import { DumperContext, alphabetical, getTables } from "./dumper"
 import { getObjFromArray } from "./dumper/get-obj-from-array"
 import { getDomainsForSchema } from "./dumper/get-domains-for-schema"
+import { getFunctionsForSchema } from "./dumper/get-functions-for-schema"
+import { getViewsForSchema } from "./dumper/get-views-for-schema"
+import { uniq } from "lodash"
+import { getGrantsForSchema } from "./dumper/get-grants-for-schema"
+import { getTablelessSequencesForSchema } from "./dumper/get-tableless-sequences-for-schema"
 
 const getTableDefinition = async (
   tableWithSchema: string,
@@ -327,7 +332,7 @@ export const getDatabaseTreeUsingClient = async ({
   })
   await client.connect()
 
-  const dumperContext: DumperContext = {
+  const ctx: DumperContext = {
     client,
     schemas,
   }
@@ -338,28 +343,24 @@ export const getDatabaseTreeUsingClient = async ({
     schemas: {},
   }
 
-  const tables = await getTables(dumperContext)
+  const tables = await getTables(ctx)
+  const schemaNames = uniq(tables.map((t) => t.schema))
 
   // Initiatialize Schemas
-  for (const table of tables) {
-    if (!dt.schemas[table.schema]) {
-      // TODO get schema owner
-      dt.schemas[table.schema] = {
-        name: table.schema,
-        tables: {},
-        views: {},
-        functions: {},
-        domains: getObjFromArray(
-          await getDomainsForSchema(
-            { schemaname: table.schema },
-            dumperContext
-          ),
-          "name"
-        ),
-        grants: [],
-        owner: table.owner, // TODO not necessarily same as table owner
-        _tablelessSequences: {},
-      }
+  for (const schema of schemaNames) {
+    const sn = { schemaname: schema }
+    // TODO get schema owner
+    dt.schemas[schema] = {
+      name: schema,
+      tables: getObjFromArray(tables.filter((t) => t.schema === schema)),
+      views: getObjFromArray(await getViewsForSchema(sn, ctx)),
+      functions: getObjFromArray(await getFunctionsForSchema(sn, ctx)),
+      domains: getObjFromArray(await getDomainsForSchema(sn, ctx)),
+      grants: await getGrantsForSchema(sn, ctx),
+      owner: "",
+      _tablelessSequences: getObjFromArray(
+        await getTablelessSequencesForSchema(sn, ctx)
+      ),
     }
   }
 
