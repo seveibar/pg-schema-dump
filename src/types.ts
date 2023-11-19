@@ -78,6 +78,7 @@ export type Table = {
   sequences: Array<Sequence>
   grants: Array<Grant>
   owner: string
+  schema: string
 }
 export type Schema = {
   name: string

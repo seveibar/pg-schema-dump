@@ -19,7 +19,6 @@
     "make-vfs": "^1.1.0",
     "pg": "^8.11.1",
     "pg-connection-from-env": "^1.1.0",
-    "pg-introspection": "^0.0.1-beta.3",
     "yargs": "^17.7.2"
   },
   "optionalDependencies": {

@@ -9,7 +9,7 @@ import {
 import { DatabaseTree } from "../../src/types"
 
 const getTestDatabase = getTestPostgresDatabaseFactory({
-  postgresVersion: "14",
+  postgresVersion: "15",
 })
 
 test("dump an example sql schema, should be the same when re-uploading and re-dumping", async (t) => {

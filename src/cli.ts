@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
-import { dumpSql, dumpTree } from "./"
+import { dumpSql, dumpTree } from "./v1"
 
 const dumpOptionsFn = (yargs) => {
   return yargs
