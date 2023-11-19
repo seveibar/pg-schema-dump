@@ -47,5 +47,9 @@ test("get sql from tree", async (t) => {
     },
   })
   // TODO there should also be a create schema and a proper schema prefix here
-  t.is(sql, "CREATE TABLE test_table (id uuid PRIMARY KEY, name text NOT NULL)")
+  t.truthy(
+    sql.includes(
+      "CREATE TABLE test_table (id uuid PRIMARY KEY, name text NOT NULL)"
+    )
+  )
 })

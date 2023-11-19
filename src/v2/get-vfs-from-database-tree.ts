@@ -1,7 +1,7 @@
 import isEmpty from "lodash/isEmpty"
-import { format as formatSQL } from "pg-formatter"
 import { DatabaseTree } from "../types"
 import { writeVfsToDirectory } from "make-vfs"
+import { format as formatSQL } from "sql-formatter"
 
 const section = (title, content) => {
   if (!content) return ""
@@ -11,7 +11,7 @@ const section = (title, content) => {
 const render = (queries: Array<{ query: string }> | { query: string }) => {
   if (!queries || isEmpty(queries)) return ""
   const queriesList = Array.isArray(queries) ? queries : [queries]
-  return formatSQL(queriesList.map(({ query }) => query + ";").join("\n\n"))
+  return queriesList.map(({ query }) => query + ";").join("\n\n")
 }
 
 export const getVfsFromTree = (
@@ -61,6 +61,16 @@ export const getVfsFromTree = (
     }
     if (!isEmpty(schema.grants)) {
       d[`${schema.name}/grants.sql`] = render(schema.grants)
+    }
+  }
+
+  // Format each SQL file
+  for (const filePath in d) {
+    try {
+      d[filePath] = formatSQL(d[filePath], { language: "postgresql" })
+    } catch (e) {
+      console.log(`Error formatting ${filePath}\n\n${d[filePath]}`)
+      continue
     }
   }
 

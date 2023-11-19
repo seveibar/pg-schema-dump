@@ -15,13 +15,15 @@ export const getPoliciesForTable = async (
     [schemaname, tablename]
   )
 
+  // NOTE: roles comes in like "{public}" or "{api_user}"
+
   // Map the result to the OutType.Policy format
   return rows.map((row) => {
     // Construct the policy definition
     const policyDef = `CREATE POLICY ${row.policyname} 
       ON ${schemaname}.${tablename}
       FOR ${row.cmd}
-      ${row.roles === "{public}" ? "" : `TO ${row.roles}`}
+      TO ${row.roles.slice(1, -1)}
       USING (${row.qual || "true"})
       WITH CHECK (${row.with_check || "true"});`
 
