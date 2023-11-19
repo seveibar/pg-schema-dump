@@ -1,5 +1,5 @@
 module.exports = {
-  files: ["tests/**/*.test.ts"],
+  files: ["test/**/*.test.ts"],
   extensions: ["ts"],
   require: ["esbuild-runner/register"],
 }

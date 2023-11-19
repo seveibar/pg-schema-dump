@@ -1,7 +1,8 @@
 #!/usr/bin/env node
+
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
-import { dumpSql, dumpTree } from "./"
+import { getStructureSQL, dumpTree } from "./v2"
 
 const dumpOptionsFn = (yargs) => {
   return yargs
@@ -53,7 +54,7 @@ yargs(hideBin(process.argv))
       if (argv.database) process.env.POSTGRES_DATABASE = argv.database
 
       console.log(
-        await dumpSql({
+        await getStructureSQL({
           schemas: argv.schemas ? argv.schemas.split(",") : ["public"],
         })
       )
@@ -77,8 +78,8 @@ yargs(hideBin(process.argv))
       if (argv.database) process.env.POSTGRES_DATABASE = argv.database
 
       await dumpTree({
-        targetDir: argv["target-dir"],
         schemas: argv.schemas ? argv.schemas.split(",") : ["public"],
+        targetDir: argv["target-dir"],
       })
     }
   )

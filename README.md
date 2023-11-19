@@ -1,7 +1,13 @@
-# Node PG Schema Dump
+# Node PG Schema Dump `pg-schema-dump`
+
+> [!WARNING]
+> If you're upgrading from version 1, it's likely there are many breaking
+> changes. In Version 2 we switched off `libpq-query` so that we could have
+> node-native query parsing/generation.
 
 This is an alternative to `pg_dump` written in node. You can use this to get
-all the SQL to recreate a schema.
+all the SQL to recreate a schema or a diretory representing a schema, which
+is awesome for viewing database changes.
 
 ![](https://user-images.githubusercontent.com/1910070/257036161-8a17dc4a-1457-4756-9ad3-52bce0445392.gif)
 

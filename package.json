@@ -1,6 +1,6 @@
 {
   "name": "pg-schema-dump",
-  "version": "1.0.5",
+  "version": "2.0.0",
   "description": "",
   "main": "dist/index.js",
   "bin": {
@@ -16,12 +16,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "lodash": "^4.17.21",
+    "make-vfs": "^1.1.0",
     "pg": "^8.11.1",
     "pg-connection-from-env": "^1.1.0",
-    "pgtui": "^1.6.2",
+    "sql-formatter": "^13.1.0",
     "yargs": "^17.7.2"
   },
+  "optionalDependencies": {
+    "pgtui": "^1.6.2"
+  },
   "devDependencies": {
+    "@types/lodash": "^4.14.201",
     "@types/node": "^20.4.5",
     "@types/pg": "^8.10.2",
     "@types/yargs": "^17.0.24",
