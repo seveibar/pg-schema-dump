@@ -1,6 +1,6 @@
 {
   "name": "pg-schema-dump",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "",
   "main": "dist/index.js",
   "bin": {
@@ -22,9 +22,6 @@
     "pg-connection-from-env": "^1.1.0",
     "sql-formatter": "^13.1.0",
     "yargs": "^17.7.2"
-  },
-  "optionalDependencies": {
-    "pgtui": "^1.6.2"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.201",
